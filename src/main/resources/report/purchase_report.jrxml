@@ -1,0 +1,253 @@
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3-41034ca841d452f3305ba55b9042260aaa1ab5dd  -->
+<jasperReport name="purchase_report" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="52823ec4-27f0-47d6-a6ed-1cc577cd8949">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ERPDB"/>
+	<parameter name="ORDER_ID" class="java.math.BigDecimal"/>
+	<query language="SQL"><![CDATA[SELECT po.id AS order_id,
+	po.invoice_number,
+	po.status,
+	po.created_at,
+	po.payment_terms,
+	po.total_amount,
+	s.name AS supplier_name,
+	s.company_name,
+	i.id AS item_id,
+	i.quantity,
+	i.unit_price,
+	i.line_total,
+	i.unit,
+	p.name AS product_name
+FROM purchase_orders po
+	JOIN supplier s ON 
+	 po.supplier_id = s.id 
+	JOIN purchase_order_items i ON 
+	 i.purchase_order_id = po.id 
+	JOIN products p ON 
+	 i.product_id = p.id
+	 WHERE po.id =  $P{ORDER_ID} ]]></query>
+	<field name="order_id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="order_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="order_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="purchase_orders"/>
+	</field>
+	<field name="invoice_number" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="invoice_number"/>
+		<property name="com.jaspersoft.studio.field.label" value="invoice_number"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="purchase_orders"/>
+	</field>
+	<field name="status" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="status"/>
+		<property name="com.jaspersoft.studio.field.label" value="status"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="purchase_orders"/>
+	</field>
+	<field name="created_at" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="created_at"/>
+		<property name="com.jaspersoft.studio.field.label" value="created_at"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="purchase_orders"/>
+	</field>
+	<field name="payment_terms" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="payment_terms"/>
+		<property name="com.jaspersoft.studio.field.label" value="payment_terms"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="purchase_orders"/>
+	</field>
+	<field name="total_amount" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="total_amount"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_amount"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="purchase_orders"/>
+	</field>
+	<field name="supplier_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="supplier_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="supplier_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="supplier"/>
+	</field>
+	<field name="company_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="company_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="company_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="supplier"/>
+	</field>
+	<field name="item_id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="item_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="item_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="purchase_order_items"/>
+	</field>
+	<field name="quantity" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="quantity"/>
+		<property name="com.jaspersoft.studio.field.label" value="quantity"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="purchase_order_items"/>
+	</field>
+	<field name="unit_price" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="unit_price"/>
+		<property name="com.jaspersoft.studio.field.label" value="unit_price"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="purchase_order_items"/>
+	</field>
+	<field name="line_total" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="line_total"/>
+		<property name="com.jaspersoft.studio.field.label" value="line_total"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="purchase_order_items"/>
+	</field>
+	<field name="unit" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="unit"/>
+		<property name="com.jaspersoft.studio.field.label" value="unit"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="purchase_order_items"/>
+	</field>
+	<field name="product_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="product_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="product_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="products"/>
+	</field>
+	<variable name="line_total1" resetType="Group" calculation="Sum" resetGroup="Group1" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{line_total}]]></expression>
+	</variable>
+	<group name="Group1">
+		<expression><![CDATA[$F{order_id}]]></expression>
+		<groupFooter>
+			<band height="50">
+				<element kind="textField" uuid="089119a3-94c5-4933-bed8-6002fdcc6e17" x="419" y="0" width="100" height="30" fontName="Times New Roman" fontSize="14.0" hTextAlign="Right" vTextAlign="Middle">
+					<expression><![CDATA[$V{line_total1}]]></expression>
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5030a6d8-d81e-4cd4-9368-e42bcf7f1875"/>
+					<property name="net.sf.jasperreports.style.box.rightPadding" value="5"/>
+				</element>
+				<element kind="staticText" uuid="a6ccad76-f9ce-4ee8-b4b6-e1068069deb5" x="331" y="0" width="88" height="30" fontName="Times New Roman" fontSize="14.0" hTextAlign="Right" vTextAlign="Middle">
+					<text><![CDATA[Sub Total]]></text>
+					<property name="net.sf.jasperreports.style.box.rightPadding" value="5"/>
+				</element>
+			</band>
+		</groupFooter>
+	</group>
+	<background splitType="Stretch"/>
+	<title height="102" splitType="Stretch">
+		<element kind="staticText" uuid="99ad0459-e1b1-4377-be79-c71b35b9fee8" x="140" y="10" width="300" height="40" fontName="Cambria" fontSize="25.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[NSync Business ERP]]></text>
+		</element>
+		<element kind="staticText" uuid="bf231fae-431b-4908-8159-c13a0debdca2" x="140" y="53" width="300" height="40" forecolor="#FC1814" fontName="Gadugi" fontSize="16.0" bold="true" hTextAlign="Center" vTextAlign="Top">
+			<text><![CDATA[Purchase Invoice]]></text>
+		</element>
+	</title>
+	<pageHeader height="127" splitType="Stretch">
+		<element kind="staticText" uuid="57850f3b-30b7-46a1-82b5-6506ad073462" x="10" y="0" width="80" height="30" fontName="Times New Roman" fontSize="14.0" vTextAlign="Middle">
+			<text><![CDATA[Invoice No]]></text>
+			<property name="net.sf.jasperreports.style.box.leftPadding" value="5"/>
+		</element>
+		<element kind="staticText" uuid="77aebd51-4ab9-447b-8d00-42652ee738ad" x="10" y="30" width="80" height="30" fontName="Times New Roman" fontSize="14.0" vTextAlign="Middle">
+			<text><![CDATA[Supplier Name]]></text>
+			<property name="net.sf.jasperreports.style.box.leftPadding" value="5"/>
+		</element>
+		<element kind="staticText" uuid="32e99f63-0847-42e9-b31f-52b33b25d1e0" x="10" y="60" width="80" height="30" fontName="Times New Roman" fontSize="14.0" vTextAlign="Middle">
+			<text><![CDATA[Copmany Name]]></text>
+			<property name="net.sf.jasperreports.style.box.leftPadding" value="5"/>
+		</element>
+		<element kind="staticText" uuid="82c53308-c4c4-4697-b19c-990f2f2c289f" x="357" y="0" width="70" height="30" fontName="Times New Roman" fontSize="14.0" vTextAlign="Middle">
+			<text><![CDATA[Order Date]]></text>
+			<property name="net.sf.jasperreports.style.box.leftPadding" value="5"/>
+		</element>
+		<element kind="staticText" uuid="cb20a9fe-600a-42a3-9fbe-60c8ae74c6ed" x="357" y="30" width="70" height="30" fontName="Times New Roman" fontSize="14.0" vTextAlign="Middle">
+			<text><![CDATA[Status]]></text>
+			<property name="net.sf.jasperreports.style.box.leftPadding" value="5"/>
+		</element>
+		<element kind="staticText" uuid="57972213-6674-4d6a-ab7d-6c445b7fa255" x="357" y="60" width="70" height="30" fontName="Times New Roman" fontSize="14.0" vTextAlign="Middle">
+			<text><![CDATA[Total]]></text>
+			<property name="net.sf.jasperreports.style.box.leftPadding" value="5"/>
+		</element>
+		<element kind="staticText" uuid="ed3ddba7-fe3c-4041-a321-e9859dc2ed2d" x="90" y="0" width="4" height="30" fontName="Times New Roman" fontSize="14.0" vTextAlign="Middle">
+			<text><![CDATA[:]]></text>
+		</element>
+		<element kind="staticText" uuid="75b5bacd-4f48-4ace-891b-4b1e8161ef67" x="90" y="30" width="4" height="30" fontName="Times New Roman" fontSize="14.0" vTextAlign="Middle">
+			<text><![CDATA[:]]></text>
+		</element>
+		<element kind="staticText" uuid="b398f47c-2393-4e50-9934-fadc74ae6c23" x="90" y="60" width="4" height="30" fontName="Times New Roman" fontSize="14.0" vTextAlign="Middle">
+			<text><![CDATA[:]]></text>
+		</element>
+		<element kind="staticText" uuid="1c58b1bb-40d2-4422-829d-dca2b2143fae" x="427" y="0" width="4" height="30" fontName="Times New Roman" fontSize="14.0" vTextAlign="Middle">
+			<text><![CDATA[:]]></text>
+		</element>
+		<element kind="staticText" uuid="95ab1e56-0958-4ebe-b57f-eb49e4fc0e65" x="427" y="30" width="4" height="30" fontName="Times New Roman" fontSize="14.0" vTextAlign="Middle">
+			<text><![CDATA[:]]></text>
+		</element>
+		<element kind="staticText" uuid="995c1924-0896-45c2-a47a-6bb75be7adbd" x="427" y="60" width="4" height="30" fontName="Times New Roman" fontSize="14.0" vTextAlign="Middle">
+			<text><![CDATA[:]]></text>
+		</element>
+		<element kind="textField" uuid="e483e98c-b50b-4efa-adb6-a85ec06ed2ab" x="94" y="0" width="158" height="30" fontName="Times New Roman" fontSize="14.0" vTextAlign="Middle">
+			<expression><![CDATA[$F{invoice_number}]]></expression>
+			<property name="net.sf.jasperreports.style.box.leftPadding" value="5"/>
+		</element>
+		<element kind="textField" uuid="19d506cb-4ac7-479d-bd7c-bbe648603312" x="94" y="30" width="158" height="30" fontName="Times New Roman" fontSize="14.0" vTextAlign="Middle">
+			<expression><![CDATA[$F{supplier_name}]]></expression>
+			<property name="net.sf.jasperreports.style.box.leftPadding" value="5"/>
+		</element>
+		<element kind="textField" uuid="cfa1e170-673b-4cf0-afd0-0eaf2e916180" x="94" y="60" width="158" height="30" fontName="Times New Roman" fontSize="14.0" vTextAlign="Middle">
+			<expression><![CDATA[$F{company_name}]]></expression>
+			<property name="net.sf.jasperreports.style.box.leftPadding" value="5"/>
+		</element>
+		<element kind="textField" uuid="af455837-f963-43d1-a755-67092f3d69b1" x="431" y="30" width="111" height="30" fontName="Times New Roman" fontSize="14.0" vTextAlign="Middle">
+			<expression><![CDATA[$F{status}]]></expression>
+			<property name="net.sf.jasperreports.style.box.leftPadding" value="5"/>
+		</element>
+		<element kind="textField" uuid="b7d8404d-7682-4764-b0f6-b38a55da3345" x="431" y="0" width="111" height="30" fontName="Times New Roman" fontSize="14.0" vTextAlign="Middle">
+			<expression><![CDATA[$F{created_at}]]></expression>
+			<property name="net.sf.jasperreports.style.box.leftPadding" value="5"/>
+		</element>
+		<element kind="textField" uuid="d59114f5-a22a-4e77-b176-e6996ecdac10" x="431" y="60" width="111" height="30" fontName="Times New Roman" fontSize="14.0" vTextAlign="Middle">
+			<expression><![CDATA[$F{total_amount}]]></expression>
+			<property name="net.sf.jasperreports.style.box.leftPadding" value="5"/>
+		</element>
+	</pageHeader>
+	<columnHeader height="30" splitType="Stretch">
+		<element kind="staticText" uuid="7b849828-a3c9-4c3f-aa2b-577efa07bfe0" mode="Opaque" x="10" y="0" width="170" height="30" backcolor="#BFBFBF" fontName="Times New Roman" fontSize="14.0" bold="true" hTextAlign="Left" vTextAlign="Middle">
+			<text><![CDATA[Product Name]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="55a0f5d0-df55-41d7-8613-7edeb996b320"/>
+			<property name="net.sf.jasperreports.style.box.leftPadding" value="5"/>
+		</element>
+		<element kind="staticText" uuid="af9d27fe-4387-4d09-84b2-982dba14004f" mode="Opaque" x="180" y="0" width="79" height="30" backcolor="#BFBFBF" fontName="Times New Roman" fontSize="14.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Quantity]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="55a0f5d0-df55-41d7-8613-7edeb996b320"/>
+			<property name="net.sf.jasperreports.style.box.leftPadding" value="5"/>
+		</element>
+		<element kind="staticText" uuid="439e1f36-f09d-43b1-a20b-d18ed735ebee" mode="Opaque" x="259" y="0" width="72" height="30" backcolor="#BFBFBF" fontName="Times New Roman" fontSize="14.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Unit]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="55a0f5d0-df55-41d7-8613-7edeb996b320"/>
+			<property name="net.sf.jasperreports.style.box.leftPadding" value="5"/>
+		</element>
+		<element kind="staticText" uuid="c83f6293-86b6-454e-9b68-6a7df36dd8e3" mode="Opaque" x="331" y="0" width="88" height="30" backcolor="#BFBFBF" fontName="Times New Roman" fontSize="14.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<text><![CDATA[Unit Price]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5030a6d8-d81e-4cd4-9368-e42bcf7f1875"/>
+			<property name="net.sf.jasperreports.style.box.rightPadding" value="5"/>
+		</element>
+		<element kind="staticText" uuid="f49fc501-1ccc-4868-bf9f-2ca2bc2e138c" mode="Opaque" x="419" y="0" width="100" height="30" backcolor="#BFBFBF" fontName="Times New Roman" fontSize="14.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<text><![CDATA[Total]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5030a6d8-d81e-4cd4-9368-e42bcf7f1875"/>
+			<property name="net.sf.jasperreports.style.box.rightPadding" value="5"/>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<element kind="textField" uuid="fff0017e-6ddf-4b15-8cbd-dc72cd2a8c2b" x="10" y="0" width="170" height="30" fontName="Times New Roman" fontSize="14.0" hTextAlign="Left" vTextAlign="Middle">
+				<expression><![CDATA[$F{product_name}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="55a0f5d0-df55-41d7-8613-7edeb996b320"/>
+				<property name="net.sf.jasperreports.style.box.leftPadding" value="5"/>
+			</element>
+			<element kind="textField" uuid="fd2c10b5-a4fa-4257-8057-c797ef678131" x="180" y="0" width="79" height="30" fontName="Times New Roman" fontSize="14.0" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{quantity}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="55a0f5d0-df55-41d7-8613-7edeb996b320"/>
+				<property name="net.sf.jasperreports.style.box.leftPadding" value="5"/>
+			</element>
+			<element kind="textField" uuid="a4117aca-9548-408f-99b8-98c985db864a" x="259" y="0" width="72" height="30" fontName="Times New Roman" fontSize="14.0" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{unit}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="55a0f5d0-df55-41d7-8613-7edeb996b320"/>
+				<property name="net.sf.jasperreports.style.box.leftPadding" value="5"/>
+			</element>
+			<element kind="textField" uuid="ea214667-89e7-4423-a6dd-c13f23578aac" x="331" y="0" width="88" height="30" fontName="Times New Roman" fontSize="14.0" hTextAlign="Right" vTextAlign="Middle">
+				<expression><![CDATA[$F{unit_price}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5030a6d8-d81e-4cd4-9368-e42bcf7f1875"/>
+				<property name="net.sf.jasperreports.style.box.rightPadding" value="5"/>
+			</element>
+			<element kind="textField" uuid="dac38e73-c9a6-4a8d-af7a-c4ac42020d2b" x="419" y="0" width="100" height="30" fontName="Times New Roman" fontSize="14.0" hTextAlign="Right" vTextAlign="Middle">
+				<expression><![CDATA[$F{line_total}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5030a6d8-d81e-4cd4-9368-e42bcf7f1875"/>
+				<property name="net.sf.jasperreports.style.box.rightPadding" value="5"/>
+			</element>
+		</band>
+	</detail>
+	<columnFooter height="67" splitType="Stretch"/>
+	<pageFooter height="54" splitType="Stretch"/>
+	<summary height="42" splitType="Stretch"/>
+</jasperReport>
