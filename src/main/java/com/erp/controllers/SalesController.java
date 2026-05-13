@@ -5,12 +5,14 @@ import com.erp.dto.SalesCreateRequestDTO;
 import com.erp.dto.SalesResponseDTO;
 import com.erp.services.SalesService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/sales")
+@PreAuthorize("hasAuthority('EMPLOYEE')")
 @RequiredArgsConstructor
 public class SalesController {
 

@@ -10,14 +10,12 @@ import java.util.List;
 @Getter
 @Setter
 public class SalesCreateRequestDTO {
-    private Long customerId;
-    private QuickCustomerCreateRequestDTO newCustomer; // optional quick create
 
-    private Long sellerEmployeeId; // future auth compatible
+    private Long customerId;
+    private QuickCustomerCreateRequestDTO newCustomer;
     private LocalDate salesDate;
     private BigDecimal discountAmount;
     private BigDecimal paidAmount;
     private String remarks;
-
     private List<SalesItemRequestDTO> items;
 }

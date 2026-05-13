@@ -40,6 +40,7 @@ public class Users implements UserDetails {
     private UserStatus status;
 
     @OneToOne(mappedBy = "user")
+    @JsonIgnore
     private Employee employee;
 
     private boolean passwordChanged = false;
@@ -50,7 +51,6 @@ public class Users implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    @JsonIgnore
     private Set<Role> roles;
     @Column(name = "created_at")
     private LocalDate created_at;

@@ -1,5 +1,6 @@
 package com.erp.services.implemented;
 
+import com.erp.config.SecurityUtil;
 import com.erp.dto.*;
 import com.erp.enities.*;
 import com.erp.enums.CustomerPaymentStatus;
@@ -34,6 +35,7 @@ public class SalesServiceImplement implements SalesService {
     private final InvoiceNumberServiceImplement invoiceNumberService;
     private final InvoiceDeliveryService invoiceDeliveryService;
     private final InventoryService inventoryService;
+    private final SecurityUtil securityUtil;
 
     @Override
     @Transactional
@@ -45,11 +47,13 @@ public class SalesServiceImplement implements SalesService {
 
         Customer customer = resolveCustomer(request);
 
-        Employee seller = null;
-        if (request.getSellerEmployeeId() != null) {
-            seller = employeeRepository.findById(request.getSellerEmployeeId())
-                    .orElseThrow(() -> new RuntimeException("Seller employee not found."));
+        Users currentUser = securityUtil.getCurrentUser();
+
+        if (currentUser.getEmployee() == null) {
+            throw new RuntimeException("Current user is not linked with employee.");
         }
+
+        Employee seller = currentUser.getEmployee();
 
         BigDecimal subTotal = BigDecimal.ZERO;
         List<SalesOrderItem> itemEntities = new ArrayList<>();
