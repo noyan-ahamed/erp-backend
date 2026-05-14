@@ -211,6 +211,68 @@ public class SalesServiceImplement implements SalesService {
     }
 
     @Override
+    public List<SalesResponseDTO> getMySales(
+            LocalDate date
+    ) {
+
+        Users currentUser =
+                securityUtil.getCurrentUser();
+
+        Employee employee =
+                currentUser.getEmployee();
+
+        LocalDate targetDate =
+                date != null
+                        ? date
+                        : LocalDate.now();
+
+        return salesOrderHeaderRepository
+                .findBySellerEmployeeAndSalesDateOrderByIdDesc(
+                        employee,
+                        targetDate
+                )
+                .stream()
+                .map(this::mapToSalesResponse)
+                .toList();
+    }
+
+    @Override
+    public BigDecimal getMyMonthlySales(
+            int year,
+            int month
+    ) {
+
+        Users currentUser =
+                securityUtil.getCurrentUser();
+
+        Employee employee =
+                currentUser.getEmployee();
+
+        LocalDate start =
+                LocalDate.of(year, month, 1);
+
+        LocalDate end =
+                start.withDayOfMonth(
+                        start.lengthOfMonth()
+                );
+
+        List<SalesOrderHeader> sales =
+                salesOrderHeaderRepository
+                        .findBySellerEmployeeAndSalesDateBetweenOrderByIdDesc(
+                                employee,
+                                start,
+                                end
+                        );
+
+        return sales.stream()
+                .map(SalesOrderHeader::getNetTotal)
+                .reduce(
+                        BigDecimal.ZERO,
+                        BigDecimal::add
+                );
+    }
+
+    @Override
     public List<CustomerSearchResponseDTO> searchCustomers(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             return new ArrayList<>();

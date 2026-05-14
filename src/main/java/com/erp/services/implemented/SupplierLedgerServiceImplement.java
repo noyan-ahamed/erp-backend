@@ -31,11 +31,14 @@ public class SupplierLedgerServiceImplement implements SupplierLedgerService {
 
     @Override
     public List<SupplierLedgerResponseDTO> getSupplierLedger(Long supplierId) {
+
         List<PartyLedgerEntry> entries =
                 ledgerRepo.findByPartyTypeAndPartyIdOrderByEntryDateAscIdAsc(PartyType.SUPPLIER, supplierId);
 
         List<SupplierLedgerResponseDTO> responseList = new ArrayList<>();
+
         BigDecimal runningBalance = BigDecimal.ZERO;
+
 
         for (PartyLedgerEntry entry : entries) {
             runningBalance = runningBalance.add(entry.getCreditAmount()).subtract(entry.getDebitAmount());
@@ -64,31 +67,7 @@ public class SupplierLedgerServiceImplement implements SupplierLedgerService {
         Supplier supplier = supplierRepo.findById(supplierId)
                 .orElseThrow(() -> new RuntimeException("Supplier not found"));
 
-        List<PartyLedgerEntry> entries =
-                ledgerRepo.findByPartyTypeAndPartyIdOrderByEntryDateAscIdAsc(PartyType.SUPPLIER, supplierId);
-
-        BigDecimal totalPurchase = BigDecimal.ZERO;
-        BigDecimal totalPayment = BigDecimal.ZERO;
-
-        for (PartyLedgerEntry entry : entries) {
-            if (entry.getTransactionType() == LedgerTransactionType.PURCHASE) {
-                totalPurchase = totalPurchase.add(entry.getCreditAmount());
-            }
-            if (entry.getTransactionType() == LedgerTransactionType.PAYMENT) {
-                totalPayment = totalPayment.add(entry.getDebitAmount());
-            }
-        }
-
-        BigDecimal currentDue = totalPurchase.subtract(totalPayment);
-
-        SupplierDueSummaryDTO dto = new SupplierDueSummaryDTO();
-        dto.setSupplierId(supplier.getId());
-        dto.setSupplierName(supplier.getName());
-        dto.setTotalPurchase(totalPurchase);
-        dto.setTotalPayment(totalPayment);
-        dto.setCurrentDue(currentDue);
-
-        return dto;
+        return buildSummary(supplier);
     }
 
     private String resolveReferenceNo(PartyLedgerEntry entry) {
@@ -116,36 +95,42 @@ public class SupplierLedgerServiceImplement implements SupplierLedgerService {
         List<SupplierDueSummaryDTO> summaryList = new ArrayList<>();
 
         for (Supplier supplier : suppliers) {
-            List<PartyLedgerEntry> entries =
-                    ledgerRepo.findByPartyTypeAndPartyIdOrderByEntryDateAscIdAsc(PartyType.SUPPLIER, supplier.getId());
-
-            BigDecimal totalPurchase = BigDecimal.ZERO;
-            BigDecimal totalPayment = BigDecimal.ZERO;
-
-            for (PartyLedgerEntry entry : entries) {
-                if (entry.getTransactionType() == LedgerTransactionType.PURCHASE) {
-                    totalPurchase = totalPurchase.add(entry.getCreditAmount());
-                }
-                if (entry.getTransactionType() == LedgerTransactionType.PAYMENT) {
-                    totalPayment = totalPayment.add(entry.getDebitAmount());
-                }
-            }
-
-            BigDecimal currentDue = totalPurchase.subtract(totalPayment);
-
-            SupplierDueSummaryDTO dto = new SupplierDueSummaryDTO();
-            dto.setSupplierId(supplier.getId());
-            dto.setSupplierName(supplier.getName());
-            dto.setCompanyName(supplier.getCompanyName());
-            dto.setMobileNumber(supplier.getMobileNumber());
-            dto.setTotalPurchase(totalPurchase);
-            dto.setTotalPayment(totalPayment);
-            dto.setCurrentDue(currentDue);
-
-            summaryList.add(dto);
+            summaryList.add(buildSummary(supplier));
         }
 
         return summaryList;
     }
+    private SupplierDueSummaryDTO buildSummary(Supplier supplier) {
+
+        List<PartyLedgerEntry> entries =
+                ledgerRepo.findByPartyTypeAndPartyIdOrderByEntryDateAscIdAsc(
+                        PartyType.SUPPLIER,
+                        supplier.getId()
+                );
+
+        BigDecimal totalPurchase = BigDecimal.ZERO;
+        BigDecimal totalPayment = BigDecimal.ZERO;
+
+        for (PartyLedgerEntry entry : entries) {
+            if (entry.getTransactionType() == LedgerTransactionType.PURCHASE) {
+                totalPurchase = totalPurchase.add(entry.getCreditAmount());
+            }
+            if (entry.getTransactionType() == LedgerTransactionType.PAYMENT) {
+                totalPayment = totalPayment.add(entry.getDebitAmount());
+            }
+        }
+
+        SupplierDueSummaryDTO dto = new SupplierDueSummaryDTO();
+        dto.setSupplierId(supplier.getId());
+        dto.setSupplierName(supplier.getName());
+        dto.setCompanyName(supplier.getCompanyName());
+        dto.setMobileNumber(supplier.getMobileNumber());
+        dto.setTotalPurchase(totalPurchase);
+        dto.setTotalPayment(totalPayment);
+        dto.setCurrentDue(totalPurchase.subtract(totalPayment));
+
+        return dto;
+    }
+
 
 }

@@ -4,12 +4,14 @@ import com.erp.dto.SupplierPaymentRequestDTO;
 import com.erp.dto.SupplierPaymentResponseDTO;
 import com.erp.services.SupplierPaymentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/supplier-payments")
+@PreAuthorize("hasAuthority('ADMIN')")
 @RequiredArgsConstructor
 public class SupplierPaymentController {
 

@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -28,9 +30,33 @@ public class SalesController {
         return salesService.getSaleById(id);
     }
 
-    @GetMapping
-    public List<SalesResponseDTO> getAllSales() {
-        return salesService.getAllSales();
+    @GetMapping("/my-sales")
+    public List<SalesResponseDTO> getMySales(
+            @RequestParam(required = false)
+            String date
+    ) {
+
+        LocalDate targetDate =
+                date != null
+                        ? LocalDate.parse(date)
+                        : LocalDate.now();
+
+        return salesService.getMySales(
+                targetDate
+        );
+    }
+
+    @GetMapping("/my-monthly-total")
+    public BigDecimal getMyMonthlyTotal(
+            @RequestParam int year,
+            @RequestParam int month
+    ) {
+
+        return salesService
+                .getMyMonthlySales(
+                        year,
+                        month
+                );
     }
 
     @GetMapping("/customer-search")

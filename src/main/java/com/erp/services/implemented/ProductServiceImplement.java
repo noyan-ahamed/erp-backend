@@ -8,6 +8,7 @@ import com.erp.repositories.ProductStockRepository;
 import com.erp.services.ProductService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class ProductServiceImplement implements ProductService {
 
     @Override
     public List<Product> getAllProduct() {
-        return productRepo.findAll();
+        return productRepo.findAll(Sort.by(Sort.Direction.ASC,"id"));
     }
 
     @Override

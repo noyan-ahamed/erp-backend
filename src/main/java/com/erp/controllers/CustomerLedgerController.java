@@ -4,6 +4,7 @@ import com.erp.dto.CustomerDueSummaryDTO;
 import com.erp.dto.CustomerLedgerResponseDTO;
 import com.erp.services.CustomerLedgerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/customer-ledger")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
 public class CustomerLedgerController {
 
     private final CustomerLedgerService customerLedgerService;

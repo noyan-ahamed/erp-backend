@@ -13,6 +13,7 @@ import com.erp.services.EmployeeService;
 import com.erp.services.MailService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,7 @@ public class EmployeeServiceImplement implements EmployeeService {
     // GET ALL EMPLOYEES
     @Override
     public List<Employee> getAllEmployees() {
-        return employeeRepo.findAll();
+        return employeeRepo.findAll(Sort.by(Sort.Direction.ASC,"id"));
     }
 
 

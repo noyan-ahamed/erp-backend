@@ -10,11 +10,17 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class CustomerPaymentRequestDTO {
+
     private Long customerId;
-    private Long salesOrderId; // optional
-    private Long receivedByEmployeeId; // optional now, useful later
+
+    // optional invoice payment
+    private Long salesOrderId;
+
     private BigDecimal amount;
+
     private LocalDate paymentDate;
+
     private PaymentMethod paymentMethod;
+
     private String remarks;
 }

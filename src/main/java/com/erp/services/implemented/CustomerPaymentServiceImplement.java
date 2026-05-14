@@ -1,5 +1,6 @@
 package com.erp.services.implemented;
 
+import com.erp.config.SecurityUtil;
 import com.erp.dto.CustomerDueSummaryDTO;
 import com.erp.dto.CustomerPaymentApprovalRequestDTO;
 import com.erp.dto.CustomerPaymentRequestDTO;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -27,11 +29,11 @@ public class CustomerPaymentServiceImplement implements CustomerPaymentService {
     private final CustomerRepository customerRepository;
     private final SalesOrderHeaderRepository salesOrderHeaderRepository;
     private final EmployeeRepository employeeRepository;
-    private final UsersRepository usersRepository;
     private final LedgerService ledgerService;
     private final InvoiceNumberServiceImplement invoiceNumberService;
     private final InvoiceDeliveryService invoiceDeliveryService;
     private final PartyLedgerEntryRepository ledgerRepository;
+    private final SecurityUtil securityUtil;
 
 
     private BigDecimal getCurrentCustomerDue(Long customerId) {
@@ -69,21 +71,31 @@ public class CustomerPaymentServiceImplement implements CustomerPaymentService {
                     .orElseThrow(() -> new RuntimeException("Sales order not found."));
         }
 
-        Employee receiver = null;
-        if (request.getReceivedByEmployeeId() != null) {
-            receiver = employeeRepository.findById(request.getReceivedByEmployeeId())
-                    .orElseThrow(() -> new RuntimeException("Employee not found."));
+        if (salesOrder != null &&
+                !Objects.equals(salesOrder.getCustomer().getId(), customer.getId())) {
+
+            throw new RuntimeException(
+                    "Sales order does not belong to selected customer."
+            );
         }
+
+        Users currentUser = securityUtil.getCurrentUser();
+
+        if (currentUser.getEmployee() == null) {
+            throw new RuntimeException("Current user is not linked with employee.");
+        }
+
+        Employee receiver = currentUser.getEmployee();
 
         if (request.getAmount() == null || request.getAmount().signum() <= 0) {
             throw new RuntimeException("Payment amount must be greater than zero.");
         }
 
         // approved due check (important)
-        CustomerDueSummaryDTO summary = buildCustomerDueSummary(customer);
-        if (request.getAmount().compareTo(summary.getCurrentDue()) > 0) {
-            throw new RuntimeException("Payment amount cannot exceed current due.");
-        }
+//        CustomerDueSummaryDTO summary = buildCustomerDueSummary(customer);
+//        if (request.getAmount().compareTo(summary.getCurrentDue()) > 0) {
+//            throw new RuntimeException("Payment amount cannot exceed current due.");
+//        }
 
 
 
@@ -133,16 +145,7 @@ public class CustomerPaymentServiceImplement implements CustomerPaymentService {
 //                    .orElseThrow(() -> new RuntimeException("Approver user not found."));
 //        }
 
-        Users approver = null;
-
-        if (request.getApprovedByUserId() != null) {
-            approver = usersRepository.findById(request.getApprovedByUserId()).orElse(null);
-
-            // optional log only, fail করবে না
-            if (approver == null) {
-                System.out.println("Warning: Approver user not found for ID = " + request.getApprovedByUserId());
-            }
-        }
+        Users approver = securityUtil.getCurrentUser();
 
         payment.setStatus(CustomerPaymentStatus.APPROVED);
         payment.setApprovedBy(approver);

@@ -29,6 +29,7 @@ public class PartyLedgerEntry {
 
     @Enumerated(EnumType.STRING)
     private LedgerTransactionType transactionType;
+    private String referenceNo;
 
     private String referenceType; // PURCHASE_ORDER, PAYMENT, SALE_ORDER, RETURN
     private Long referenceId;     // purchaseOrder id, payment id etc.

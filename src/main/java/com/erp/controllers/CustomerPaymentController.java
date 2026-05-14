@@ -6,6 +6,7 @@ import com.erp.dto.CustomerPaymentRequestDTO;
 import com.erp.dto.CustomerPaymentResponseDTO;
 import com.erp.services.CustomerPaymentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,27 +19,26 @@ public class CustomerPaymentController {
     private final CustomerPaymentService customerPaymentService;
 
 
-    // =========================
+
     // Employee Search Summary
-    // =========================
     @GetMapping("/summary")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE','ADMIN')")
     public CustomerDueSummaryDTO getCustomerDueSummary(@RequestParam String keyword) {
         return customerPaymentService.searchCustomerDueSummary(keyword);
     }
 
-    // =========================
     // Employee Create Payment
-    // =========================
     @PostMapping
+    @PreAuthorize("hasAuthority('EMPLOYEE')")
     public CustomerPaymentResponseDTO createPayment(@RequestBody CustomerPaymentRequestDTO request) {
         return customerPaymentService.createPayment(request);
     }
 
 
-    // =========================
+
     // Admin Approval
-    // =========================
     @PutMapping("/{id}/approve")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public CustomerPaymentResponseDTO approvePayment(
             @PathVariable Long id,
             @RequestBody CustomerPaymentApprovalRequestDTO request
@@ -69,6 +69,7 @@ public class CustomerPaymentController {
 //    }
 
     @PutMapping("/{id}/reject")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public CustomerPaymentResponseDTO rejectPayment(
             @PathVariable Long id,
             @RequestBody CustomerPaymentApprovalRequestDTO request
@@ -76,18 +77,18 @@ public class CustomerPaymentController {
         return customerPaymentService.rejectPayment(id, request);
     }
 
-    // =========================
+
     // History
-    // =========================
     @GetMapping("/customer/{customerId}")
+    @PreAuthorize("hasAuthority('EMPLOYEE')")
     public List<CustomerPaymentResponseDTO> getPaymentsByCustomer(@PathVariable Long customerId) {
         return customerPaymentService.getPaymentsByCustomer(customerId);
     }
 
-    // =========================
+
     // Admin Pending List
-    // =========================
     @GetMapping("/pending")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<CustomerPaymentResponseDTO> getPendingPayments() {
         return customerPaymentService.getPendingPayments();
     }
@@ -99,6 +100,7 @@ public class CustomerPaymentController {
 
 
     @GetMapping("/admin/list")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<CustomerPaymentResponseDTO> getAdminPaymentList(
             @RequestParam(defaultValue = "") String keyword,
             @RequestParam(defaultValue = "ALL") String status

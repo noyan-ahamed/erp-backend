@@ -7,6 +7,7 @@ import com.erp.repositories.ProductCategoryRepository;
 import com.erp.services.CategoryService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public class CategoryServiceImplement implements CategoryService {
 
     @Override
     public List<ProductCategory> getAllCategory() {
-        return repo.findAll();
+        return repo.findAll(Sort.by(Sort.Direction.ASC,"id"));
     }
 
     @Override
